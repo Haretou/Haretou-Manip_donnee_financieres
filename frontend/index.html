@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Gestion des Ventes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <h1>SalesTracker</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></li>
+                <li><a href="#" id="importBtn"><i class="fas fa-file-import"></i> Importer</a></li>
+                <li><a href="#" id="exportBtn"><i class="fas fa-file-export"></i> Exporter</a></li>
+            </ul>
+        </nav>
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i>
+            <span>Administrateur</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Bienvenue dans votre système de gestion des ventes</h2>
+                <p>Une solution complète pour analyser vos données de ventes et prendre des décisions éclairées</p>
+                <a href="dashboard.html" class="btn primary-btn">Accéder au tableau de bord</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>Fonctionnalités principales</h2>
+            <div class="feature-container">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Analyses visuelles</h3>
+                    <p>Visualisez vos données de ventes avec des graphiques interactifs et des tableaux détaillés</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Gestion de données</h3>
+                    <p>Importez facilement vos données CSV et gérez-les efficacement dans une base de données phpMyAdmin</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>Exportation de rapports</h3>
+                    <p>Générez et exportez des rapports détaillés dans différents formats pour vos présentations</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search-dollar"></i>
+                    </div>
+                    <h3>Tendances et prévisions</h3>
+                    <p>Identifiez les tendances et obtenez des prévisions basées sur l'historique de vos ventes</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-stats">
+            <h2>Aperçu rapide</h2>
+            <div class="stats-container">
+                <div class="stat-card" id="totalSales">
+                    <h3>Ventes totales</h3>
+                    <p class="stat-value">Chargement...</p>
+                    <p class="stat-period">Toutes périodes</p>
+                </div>
+                <div class="stat-card" id="bestStore">
+                    <h3>Meilleur magasin</h3>
+                    <p class="stat-value">Chargement...</p>
+                    <p class="stat-detail">Chargement...</p>
+                </div>
+                <div class="stat-card" id="bestProduct">
+                    <h3>Produit le plus vendu</h3>
+                    <p class="stat-value">Chargement...</p>
+                    <p class="stat-detail">Chargement...</p>
+                </div>
+                <div class="stat-card" id="lastUpdate">
+                    <h3>Dernière mise à jour</h3>
+                    <p class="stat-value" id="updateDate">Chargement...</p>
+                    <p class="stat-detail" id="updateTime">Chargement...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="cta-content">
+                <h2>Prêt à analyser vos données de ventes ?</h2>
+                <p>Accédez au tableau de bord complet pour explorer en détail vos performances commerciales</p>
+                <a href="dashboard.html" class="btn primary-btn">Voir le tableau de bord</a>
+            </div>
+        </section>
+    </main>
+
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Importer des données</h2>
+            <form id="importForm">
+                <div class="form-group">
+                    <label for="csvFile">Sélectionner un fichier CSV :</label>
+                    <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+                </div>
+                <div class="form-group">
+                    <label for="dateFormat">Format de date :</label>
+                    <select id="dateFormat" name="dateFormat">
+                        <option value="DMY">JJ/MM/AAAA</option>
+                        <option value="MDY">MM/JJ/AAAA</option>
+                        <option value="YMD">AAAA-MM-JJ</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary-btn">Importer</button>
+                    <button type="button" class="btn secondary-btn cancel-btn">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Exporter des données</h2>
+            <form id="exportForm">
+                <div class="form-group">
+                    <label for="exportFormat">Format d'exportation :</label>
+                    <select id="exportFormat" name="exportFormat">
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateRange">Période :</label>
+                    <select id="dateRange" name="dateRange">
+                        <option value="all">Toutes les données</option>
+                        <option value="thisMonth">Mois en cours</option>
+                        <option value="lastMonth">Mois précédent</option>
+                        <option value="thisYear">Année en cours</option>
+                        <option value="custom">Personnalisé</option>
+                    </select>
+                </div>
+                <div id="customDateRange" style="display: none;">
+                    <div class="form-group">
+                        <label for="startDate">Date de début :</label>
+                        <input type="date" id="startDate" name="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Date de fin :</label>
+                        <input type="date" id="endDate" name="endDate">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary-btn">Exporter</button>
+                    <button type="button" class="btn secondary-btn cancel-btn">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SalesTracker</h3>
+                <p>Un système de gestion des ventes simple et efficace pour analyser vos données commerciales.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="dashboard.html">Tableau de bord</a></li>
+                    <li><a href="#" id="footerImportBtn">Importer des données</a></li>
+                    <li><a href="#" id="footerExportBtn">Exporter des données</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-envelope"></i> biance.raphaelB2@ynov.com</p>
+                <p><i class="fas fa-phone"></i> +33 7 66 66 66 66</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SalesTracker. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="js/dashboard_data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion des modales
+            const importBtn = document.getElementById('importBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const footerImportBtn = document.getElementById('footerImportBtn');
+            const footerExportBtn = document.getElementById('footerExportBtn');
+            const importModal = document.getElementById('importModal');
+            const exportModal = document.getElementById('exportModal');
+            const closeBtns = document.querySelectorAll('.close');
+            const cancelBtns = document.querySelectorAll('.cancel-btn');
+
+            // Ouverture des modales
+            importBtn.addEventListener('click', () => importModal.style.display = 'block');
+            exportBtn.addEventListener('click', () => exportModal.style.display = 'block');
+            footerImportBtn.addEventListener('click', () => importModal.style.display = 'block');
+            footerExportBtn.addEventListener('click', () => exportModal.style.display = 'block');
+
+            // Fermeture des modales
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    importModal.style.display = 'none';
+                    exportModal.style.display = 'none';
+                });
+            });
+
+            cancelBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    importModal.style.display = 'none';
+                    exportModal.style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target == importModal) {
+                    importModal.style.display = 'none';
+                }
+                if (event.target == exportModal) {
+                    exportModal.style.display = 'none';
+                }
+            });
+
+            // Gestion de la sélection de date personnalisée
+            const dateRange = document.getElementById('dateRange');
+            const customDateRange = document.getElementById('customDateRange');
+
+            dateRange.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customDateRange.style.display = 'block';
+                } else {
+                    customDateRange.style.display = 'none';
+                }
+            });
+
+            // Charger les statistiques rapides si les données sont disponibles
+            if (typeof dashboardData !== 'undefined') {
+                // Total des ventes
+                const totalSalesElement = document.querySelector('#totalSales .stat-value');
+                totalSalesElement.textContent = new Intl.NumberFormat('fr-FR', {
+                    style: 'currency',
+                    currency: 'EUR'
+                }).format(dashboardData.total_sales);
+
+                // Meilleur magasin
+                if (dashboardData.sales_by_store && dashboardData.sales_by_store.length > 0) {
+                    const bestStore = dashboardData.sales_by_store[0];
+                    document.querySelector('#bestStore .stat-value').textContent = bestStore.magasin;
+                    document.querySelector('#bestStore .stat-detail').textContent = new Intl.NumberFormat('fr-FR', {
+                        style: 'currency',
+                        currency: 'EUR'
+                    }).format(bestStore.total_ventes);
+                }
+
+                // Produit le plus vendu
+                if (dashboardData.best_selling_products && dashboardData.best_selling_products.length > 0) {
+                    const bestProduct = dashboardData.best_selling_products[0];
+                    document.querySelector('#bestProduct .stat-value').textContent = bestProduct.produit;
+                    document.querySelector('#bestProduct .stat-detail').textContent = `${bestProduct.quantite_totale} unités`;
+                }
+
+                // Date de mise à jour
+                const now = new Date();
+                document.querySelector('#updateDate').textContent = now.toLocaleDateString('fr-FR');
+                document.querySelector('#updateTime').textContent = now.toLocaleTimeString('fr-FR');
+            }
+        });
+    </script>
+</body>
+
+</html>

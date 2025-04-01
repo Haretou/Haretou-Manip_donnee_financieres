@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Système de Gestion des Ventes</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js pour les graphiques -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <h1>SalesTracker</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></li>
+                <li><a href="#" id="importBtn"><i class="fas fa-file-import"></i> Importer</a></li>
+                <li><a href="#" id="exportBtn"><i class="fas fa-file-export"></i> Exporter</a></li>
+            </ul>
+        </nav>
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i>
+            <span>Administrateur</span>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Filtres et options</h3>
+            </div>
+            <div class="filter-section">
+                <h4>Période</h4>
+                <div class="filter-option">
+                    <input type="radio" id="periodAll" name="period" value="all" checked>
+                    <label for="periodAll">Toutes</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" id="periodThisMonth" name="period" value="thisMonth">
+                    <label for="periodThisMonth">Mois en cours</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" id="periodLastMonth" name="period" value="lastMonth">
+                    <label for="periodLastMonth">Mois précédent</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" id="periodThisYear" name="period" value="thisYear">
+                    <label for="periodThisYear">Année en cours</label>
+                </div>
+                <div class="filter-option">
+                    <input type="radio" id="periodCustom" name="period" value="custom">
+                    <label for="periodCustom">Personnalisé</label>
+                </div>
+                <div id="customPeriod" class="custom-period" style="display: none;">
+                    <div class="filter-date">
+                        <label for="startDate">Du:</label>
+                        <input type="date" id="startDate" name="startDate">
+                    </div>
+                    <div class="filter-date">
+                        <label for="endDate">Au:</label>
+                        <input type="date" id="endDate" name="endDate">
+                    </div>
+                    <button class="btn primary-btn apply-btn">Appliquer</button>
+                </div>
+            </div>
+            <div class="filter-section">
+                <h4>Magasins</h4>
+                <div id="storeFilters" class="filter-options">
+                    <div class="filter-option">
+                        <input type="checkbox" id="storeAll" name="store" value="all" checked>
+                        <label for="storeAll">Tous les magasins</label>
+                    </div>
+                    <!-- Les autres options seront générées dynamiquement -->
+                </div>
+            </div>
+            <div class="filter-section">
+                <h4>Produits</h4>
+                <select id="productFilter" class="filter-select">
+                    <option value="all">Tous les produits</option>
+                    <!-- Les autres options seront générées dynamiquement -->
+                </select>
+            </div>
+            <div class="filter-section">
+                <h4>Affichage</h4>
+                <div class="filter-option">
+                    <input type="checkbox" id="showTables" name="display" value="tables" checked>
+                    <label for="showTables">Tableaux</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="showCharts" name="display" value="charts" checked>
+                    <label for="showCharts">Graphiques</label>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button id="refreshData" class="btn primary-btn"><i class="fas fa-sync-alt"></i> Rafraîchir</button>
+                <button id="exportData" class="btn secondary-btn"><i class="fas fa-download"></i> Exporter</button>
+            </div>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dashboard-header">
+                <h2>Tableau de bord des ventes</h2>
+                <div class="date-info">
+                    <span id="currentDate">Date de mise à jour: </span>
+                </div>
+            </div>
+
+            <div class="metrics-row">
+                <div class="metric-card total-sales">
+                    <div class="metric-icon">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Total des ventes</h3>
+                        <p id="totalSalesValue" class="metric-value">0 €</p>
+                        <p id="totalSalesChange" class="metric-change positive">+0%</p>
+                    </div>
+                </div>
+                <div class="metric-card total-products">
+                    <div class="metric-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Produits vendus</h3>
+                        <p id="totalProductsValue" class="metric-value">0</p>
+                        <p id="totalProductsChange" class="metric-change positive">+0%</p>
+                    </div>
+                </div>
+                <div class="metric-card active-stores">
+                    <div class="metric-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Magasins actifs</h3>
+                        <p id="activeStoresValue" class="metric-value">0</p>
+                        <p id="activeStoresChange" class="metric-change neutral">0%</p>
+                    </div>
+                </div>
+                <div class="metric-card avg-transaction">
+                    <div class="metric-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Valeur moyenne</h3>
+                        <p id="avgTransactionValue" class="metric-value">0 €</p>
+                        <p id="avgTransactionChange" class="metric-change negative">0%</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="chart-container sales-trend">
+                    <div class="chart-header">
+                        <h3>Évolution des ventes</h3>
+                        <div class="chart-controls">
+                            <select id="salesTrendPeriod" class="chart-select">
+                                <option value="weekly">Hebdomadaire</option>
+                                <option value="monthly" selected>Mensuelle</option>
+                                <option value="yearly">Annuelle</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="salesTrendChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container stores-comparison">
+                    <div class="chart-header">
+                        <h3>Ventes par magasin</h3>
+                        <div class="chart-controls">
+                            <select id="storesChartType" class="chart-select">
+                                <option value="pie">Camembert</option>
+                                <option value="bar" selected>Barres</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="storesComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="chart-container products-performance">
+                    <div class="chart-header">
+                        <h3>Performance des produits</h3>
+                        <div class="chart-controls">
+                            <select id="productMetric" class="chart-select">
+                                <option value="quantity">Quantité</option>
+                                <option value="revenue" selected>Chiffre d'affaires</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="productsPerformanceChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container monthly-comparison">
+                    <div class="chart-header">
+                        <h3>Comparaison mensuelle</h3>
+                        <div class="chart-controls">
+                            <select id="comparisonYear" class="chart-select">
+                                <option value="all">Toutes les années</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="monthlyComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>Détail des ventes par magasin</h3>
+                    <div class="table-controls">
+                        <input type="text" id="storeSearch" placeholder="Rechercher un magasin..." class="search-input">
+                        <select id="storeSort" class="table-select">
+                            <option value="sales-desc">CA (décroissant)</option>
+                            <option value="sales-asc">CA (croissant)</option>
+                            <option value="name-asc">Nom (A-Z)</option>
+                            <option value="name-desc">Nom (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="storesTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Magasin</th>
+                                <th>Ventes (€)</th>
+                                <th>Quantité</th>
+                                <th>% du total</th>
+                                <th>Évolution</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les données seront générées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>Top produits</h3>
+                    <div class="table-controls">
+                        <input type="text" id="productSearch" placeholder="Rechercher un produit..." class="search-input">
+                        <select id="productLimit" class="table-select">
+                            <option value="5">Top 5</option>
+                            <option value="10" selected>Top 10</option>
+                            <option value="20">Top 20</option>
+                            <option value="all">Tous</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="productsTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Quantité</th>
+                                <th>Ventes (€)</th>
+                                <th>Prix moyen</th>
+                                <th>% du total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les données seront générées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Importer des données</h2>
+            <form id="importForm">
+                <div class="form-actions">
+                    <button type="submit" class="btn primary-btn">Exporter</button>
+                    <button type="button" class="btn secondary-btn cancel-btn">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SalesTracker</h3>
+                <p>Un système de gestion des ventes simple et efficace pour analyser vos données commerciales.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="dashboard.html">Tableau de bord</a></li>
+                    <li><a href="#" id="footerImportBtn">Importer des données</a></li>
+                    <li><a href="#" id="footerExportBtn">Exporter des données</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-envelope"></i> contact@salestracker.com</p>
+                <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SalesTracker. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="js/dashboard_data.js"></script>
+    <script src="js/charts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mise à jour de la date actuelle
+            const now = new Date();
+            document.getElementById('currentDate').textContent += now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR');
+
+            // Gestion des modales
+            const importBtn = document.getElementById('importBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const footerImportBtn = document.getElementById('footerImportBtn');
+            const footerExportBtn = document.getElementById('footerExportBtn');
+            const exportDataBtn = document.getElementById('exportData');
+            const importModal = document.getElementById('importModal');
+            const exportModal = document.getElementById('exportModal');
+            const closeBtns = document.querySelectorAll('.close');
+            const cancelBtns = document.querySelectorAll('.cancel-btn');
+
+            // Ouverture des modales
+            importBtn.addEventListener('click', () => importModal.style.display = 'block');
+            exportBtn.addEventListener('click', () => exportModal.style.display = 'block');
+            footerImportBtn.addEventListener('click', () => importModal.style.display = 'block');
+            footerExportBtn.addEventListener('click', () => exportModal.style.display = 'block');
+            exportDataBtn.addEventListener('click', () => exportModal.style.display = 'block');
+
+            // Fermeture des modales
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    importModal.style.display = 'none';
+                    exportModal.style.display = 'none';
+                });
+            });
+
+            cancelBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    importModal.style.display = 'none';
+                    exportModal.style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', function(event) {
+                if (event.target == importModal) {
+                    importModal.style.display = 'none';
+                }
+                if (event.target == exportModal) {
+                    exportModal.style.display = 'none';
+                }
+            });
+
+            // Gestion des périodes personnalisées
+            const periodCustomRadio = document.getElementById('periodCustom');
+            const customPeriod = document.getElementById('customPeriod');
+
+            periodCustomRadio.addEventListener('change', function() {
+                if (this.checked) {
+                    customPeriod.style.display = 'block';
+                } else {
+                    customPeriod.style.display = 'none';
+                }
+            });
+
+            // Gestion de la sélection de date personnalisée pour l'export
+            const dateRange = document.getElementById('dateRange');
+            const customDateRange = document.getElementById('customDateRange');
+
+            dateRange.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customDateRange.style.display = 'block';
+                } else {
+                    customDateRange.style.display = 'none';
+                }
+            });
+
+            // Initialiser les tableaux et graphiques
+            if (typeof dashboardData !== 'undefined' && typeof initializeCharts === 'function') {
+                initializeCharts(dashboardData);
+                updateDashboardMetrics(dashboardData);
+                populateFilterOptions(dashboardData);
+                populateTables(dashboardData);
+            }
+        });
+
+        // Fonction pour mettre à jour les métriques principales
+        function updateDashboardMetrics(data) {
+            if (!data) return;
+
+            // Total des ventes
+            const totalSales = data.total_sales || 0;
+            document.getElementById('totalSalesValue').textContent = new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(totalSales);
+
+            // Nombre de produits vendus
+            let totalQuantity = 0;
+            if (data.sales_by_product) {
+                data.sales_by_product.forEach(product => {
+                    totalQuantity += product.quantite_totale || 0;
+                });
+            }
+            document.getElementById('totalProductsValue').textContent = new Intl.NumberFormat('fr-FR').format(totalQuantity);
+
+            // Nombre de magasins actifs
+            const activeStores = data.sales_by_store ? data.sales_by_store.length : 0;
+            document.getElementById('activeStoresValue').textContent = activeStores;
+
+            // Valeur moyenne par transaction
+            const avgTransaction = totalSales / (totalQuantity || 1);
+            document.getElementById('avgTransactionValue').textContent = new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'EUR',
+                maximumFractionDigits: 2
+            }).format(avgTransaction);
+
+            // Pour l'instant on ne calcule pas les évolutions car pas de données historiques
+            document.getElementById('totalSalesChange').textContent = 'N/A';
+            document.getElementById('totalProductsChange').textContent = 'N/A';
+            document.getElementById('activeStoresChange').textContent = 'N/A';
+            document.getElementById('avgTransactionChange').textContent = 'N/A';
+        }
+
+        // Fonction pour peupler les options de filtres
+        function populateFilterOptions(data) {
+            if (!data) return;
+
+            // Filtre de magasins
+            const storeFilters = document.getElementById('storeFilters');
+            const existingStoreAll = storeFilters.querySelector('#storeAll');
+
+            // Conserver uniquement l'option "Tous les magasins"
+            while (storeFilters.firstChild) {
+                storeFilters.removeChild(storeFilters.firstChild);
+            }
+
+            // Recréer l'option "Tous les magasins"
+            const allStoresDiv = document.createElement('div');
+            allStoresDiv.className = 'filter-option';
+            allStoresDiv.innerHTML = `
+                <input type="checkbox" id="storeAll" name="store" value="all" checked>
+                <label for="storeAll">Tous les magasins</label>
+            `;
+            storeFilters.appendChild(allStoresDiv);
+
+            // Ajouter les options pour chaque magasin
+            if (data.sales_by_store) {
+                data.sales_by_store.forEach((store, index) => {
+                    const storeDiv = document.createElement('div');
+                    storeDiv.className = 'filter-option';
+                    storeDiv.innerHTML = `
+                        <input type="checkbox" id="store${index}" name="store" value="${store.magasin}" checked>
+                        <label for="store${index}">${store.magasin}</label>
+                    `;
+                    storeFilters.appendChild(storeDiv);
+                });
+            }
+
+            // Filtre de produits
+            const productFilter = document.getElementById('productFilter');
+
+            // Conserver uniquement l'option "Tous les produits"
+            while (productFilter.options.length > 1) {
+                productFilter.remove(1);
+            }
+
+            // Ajouter les options pour chaque produit
+            if (data.sales_by_product) {
+                data.sales_by_product.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.produit;
+                    option.textContent = product.produit;
+                    productFilter.appendChild(option);
+                });
+            }
+
+            // Filtre d'années pour la comparaison mensuelle
+            const comparisonYear = document.getElementById('comparisonYear');
+
+            // Extraire les années disponibles
+            const years = new Set();
+            if (data.monthly_sales) {
+                data.monthly_sales.forEach(month => {
+                    const year = month.periode.substring(0, 4);
+                    years.add(year);
+                });
+            }
+
+            // Ajouter les options pour chaque année
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                comparisonYear.appendChild(option);
+            });
+        }
+
+        // Fonction pour peupler les tableaux
+        function populateTables(data) {
+            if (!data) return;
+
+            // Tableau des magasins
+            const storesTable = document.getElementById('storesTable').querySelector('tbody');
+            storesTable.innerHTML = '';
+
+            if (data.sales_by_store) {
+                data.sales_by_store.forEach(store => {
+                    const totalSales = data.total_sales || 1;
+                    const percentage = (store.total_ventes / totalSales) * 100;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${store.magasin}</td>
+                        <td>${new Intl.NumberFormat('fr-FR', {style: 'currency', currency: 'EUR'}).format(store.total_ventes)}</td>
+                        <td>${store.quantite_totale ? new Intl.NumberFormat('fr-FR').format(store.quantite_totale) : 'N/A'}</td>
+                        <td>${percentage.toFixed(2)}%</td>
+                        <td>N/A</td>
+                    `;
+                    storesTable.appendChild(row);
+                });
+            }
+
+            // Tableau des produits
+            const productsTable = document.getElementById('productsTable').querySelector('tbody');
+            productsTable.innerHTML = '';
+
+            if (data.sales_by_product) {
+                // Limiter aux 10 premiers produits par défaut
+                const productLimit = parseInt(document.getElementById('productLimit').value) || 10;
+                const productsToShow = data.sales_by_product.slice(0, productLimit === 'all' ? data.sales_by_product.length : productLimit);
+
+                const totalSales = data.total_sales || 1;
+
+                productsToShow.forEach(product => {
+                    const percentage = (product.total_ventes / totalSales) * 100;
+                    const avgPrice = product.total_ventes / product.quantite_totale;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.produit}</td>
+                        <td>${new Intl.NumberFormat('fr-FR').format(product.quantite_totale)}</td>
+                        <td>${new Intl.NumberFormat('fr-FR', {style: 'currency', currency: 'EUR'}).format(product.total_ventes)}</td>
+                        <td>${new Intl.NumberFormat('fr-FR', {style: 'currency', currency: 'EUR'}).format(avgPrice)}</td>
+                        <td>${percentage.toFixed(2)}%</td>
+                    `;
+                    productsTable.appendChild(row);
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>-group">
+<label for="exportContent">Contenu à exporter :</label>
+<select id="exportContent" name="exportContent">
+                        <option value="all">Toutes les données</option>
+                        <option value="filtered">Données filtrées actuelles</option>
+                        <option value="sales">Ventes par magasin</option>
+                        <option value="products">Ventes par produit</option>
+                    </select>
+</div>
+<div class="form-group">
+    <label for="dateRange">Période :</label>
+    <select id="dateRange" name="dateRange">
+                        <option value="all">Toutes les données</option>
+                        <option value="thisMonth">Mois en cours</option>
+                        <option value="lastMonth">Mois précédent</option>
+                        <option value="thisYear">Année en cours</option>
+                        <option value="custom">Personnalisé</option>
+                    </select>
+</div>
+<div id="customDateRange" style="display: none;">
+    <div class="form-group">
+        <label for="exportStartDate">Date de début :</label>
+        <input type="date" id="exportStartDate" name="exportStartDate">
+    </div>
+    <div class="form-group">
+        <label for="exportEndDate">Date de fin :</label>
+        <input type="date" id="exportEndDate" name="exportEndDate">
+    </div>
+</div>
+<div class="form-group">
+    <label for="csvFile">Sélectionner un fichier CSV :</label>
+    <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+</div>
+<div class="form-group">
+    <label for="dateFormat">Format de date :</label>
+    <select id="dateFormat" name="dateFormat">
+                        <option value="DMY">JJ/MM/AAAA</option>
+                        <option value="MDY">MM/JJ/AAAA</option>
+                        <option value="YMD">AAAA-MM-JJ</option>
+                    </select>
+</div>
+<div class="form-group">
+    <label for="importAction">Action :</label>
+    <select id="importAction" name="importAction">
+                        <option value="append">Ajouter aux données existantes</option>
+                        <option value="replace">Remplacer les données existantes</option>
+                    </select>
+</div>
+<div class="form-actions">
+    <button type="submit" class="btn primary-btn">Importer</button>
+    <button type="button" class="btn secondary-btn cancel-btn">Annuler</button>
+</div>
+</form>
+</div>
+</div>
+
+<div id="exportModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Exporter des données</h2>
+        <form id="exportForm">
+            <div class="form-group">
+                <label for="exportFormat">Format d'exportation :</label>
+                <select id="exportFormat" name="exportFormat">
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                    </select>
+            </div>
+            <div class="form
