@@ -22,43 +22,6 @@ Ce projet est un système complet de gestion et d'analyse des données de ventes
 2. Créez une nouvelle base de données appelée `ventes_db`
 3. Importez le fichier `base_de_donnees/ventes_db.sql`
 
-### 2. Backend Python
-1. Installez les dépendances Python :
-```bash
-pip install mysql-connector-python pandas numpy
-```
-
-2. Modifiez le fichier `backend/config.py` pour correspondre à votre configuration MySQL :
-```python
-DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'votre_utilisateur',
-    'password': 'votre_mot_de_passe',
-    'database': 'ventes_db'
-}
-```
-
-### 3. Importation des données
-1. Placez votre fichier CSV de données de ventes à la racine du projet
-2. Exécutez le script d'importation :
-```bash
-cd backend
-python import_csv.py
-```
-
-### 4. Génération des données pour le tableau de bord
-```bash
-cd backend
-python analysis.py
-```
-
-### 5. Accès à l'interface web
-Ouvrez les fichiers HTML dans votre navigateur ou utilisez un serveur web simple comme celui intégré à Python :
-```bash
-cd frontend
-python -m http.server
-```
-Puis accédez à `http://localhost:8000` dans votre navigateur.
 
 ## Utilisation
 1. **Page d'accueil** : Présente un aperçu des fonctionnalités et quelques statistiques clés
