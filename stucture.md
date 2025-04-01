@@ -1,25 +1,16 @@
-project_ventes/
-├── README.md
-├── data/
-│   └── donnees_ventes_tp_pandas.csv
-├── database/
+/projet_ventes_financieres/
+├── base_de_donnees/
+│   └── ventes_db.sql
+├── backend/
 │   ├── config.py
-│   ├── db_setup.py
-│   └── db_operations.py
-├── analysis/
-│   ├── data_processor.py
-│   └── visualizations.py
-├── web/
-│   ├── app.py
-│   ├── static/
-│   │   ├── css/
-│   │   │   └── style.css
-│   │   └── js/
-│   │       └── main.js
-│   └── templates/
-│       ├── index.html
-│       ├── sales.html
-│       ├── products.html
-│       ├── stores.html
-│       └── analytics.html
-└── requirements.txt
+│   ├── import_csv.py
+│   ├── database.py
+│   └── analysis.py
+├── frontend/
+│   ├── index.html
+│   ├── dashboard.html
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── charts.js
+└── README.md
