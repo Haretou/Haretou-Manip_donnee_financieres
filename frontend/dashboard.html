@@ -287,6 +287,76 @@
             <span class="close">&times;</span>
             <h2>Importer des données</h2>
             <form id="importForm">
+                <div class="form-group">
+                    <label for="csvFile">Sélectionner un fichier CSV :</label>
+                    <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+                </div>
+                <div class="form-group">
+                    <label for="dateFormat">Format de date :</label>
+                    <select id="dateFormat" name="dateFormat">
+                        <option value="DMY">JJ/MM/AAAA</option>
+                        <option value="MDY">MM/JJ/AAAA</option>
+                        <option value="YMD">AAAA-MM-JJ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="importAction">Action :</label>
+                    <select id="importAction" name="importAction">
+                        <option value="append">Ajouter aux données existantes</option>
+                        <option value="replace">Remplacer les données existantes</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary-btn">Importer</button>
+                    <button type="button" class="btn secondary-btn cancel-btn">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Exporter des données</h2>
+            <form id="exportForm">
+                <div class="form-group">
+                    <label for="exportFormat">Format d'exportation :</label>
+                    <select id="exportFormat" name="exportFormat">
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="exportContent">Contenu à exporter :</label>
+                    <select id="exportContent" name="exportContent">
+                        <option value="all">Toutes les données</option>
+                        <option value="filtered">Données filtrées actuelles</option>
+                        <option value="sales">Ventes par magasin</option>
+                        <option value="products">Ventes par produit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateRange">Période :</label>
+                    <select id="dateRange" name="dateRange">
+                        <option value="all">Toutes les données</option>
+                        <option value="thisMonth">Mois en cours</option>
+                        <option value="lastMonth">Mois précédent</option>
+                        <option value="thisYear">Année en cours</option>
+                        <option value="custom">Personnalisé</option>
+                    </select>
+                </div>
+                <div id="customDateRange" style="display: none;">
+                    <div class="form-group">
+                        <label for="exportStartDate">Date de début :</label>
+                        <input type="date" id="exportStartDate" name="exportStartDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="exportEndDate">Date de fin :</label>
+                        <input type="date" id="exportEndDate" name="exportEndDate">
+                    </div>
+                </div>
                 <div class="form-actions">
                     <button type="submit" class="btn primary-btn">Exporter</button>
                     <button type="button" class="btn secondary-btn cancel-btn">Annuler</button>
@@ -572,74 +642,4 @@
     </script>
 </body>
 
-</html>-group">
-<label for="exportContent">Contenu à exporter :</label>
-<select id="exportContent" name="exportContent">
-                        <option value="all">Toutes les données</option>
-                        <option value="filtered">Données filtrées actuelles</option>
-                        <option value="sales">Ventes par magasin</option>
-                        <option value="products">Ventes par produit</option>
-                    </select>
-</div>
-<div class="form-group">
-    <label for="dateRange">Période :</label>
-    <select id="dateRange" name="dateRange">
-                        <option value="all">Toutes les données</option>
-                        <option value="thisMonth">Mois en cours</option>
-                        <option value="lastMonth">Mois précédent</option>
-                        <option value="thisYear">Année en cours</option>
-                        <option value="custom">Personnalisé</option>
-                    </select>
-</div>
-<div id="customDateRange" style="display: none;">
-    <div class="form-group">
-        <label for="exportStartDate">Date de début :</label>
-        <input type="date" id="exportStartDate" name="exportStartDate">
-    </div>
-    <div class="form-group">
-        <label for="exportEndDate">Date de fin :</label>
-        <input type="date" id="exportEndDate" name="exportEndDate">
-    </div>
-</div>
-<div class="form-group">
-    <label for="csvFile">Sélectionner un fichier CSV :</label>
-    <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
-</div>
-<div class="form-group">
-    <label for="dateFormat">Format de date :</label>
-    <select id="dateFormat" name="dateFormat">
-                        <option value="DMY">JJ/MM/AAAA</option>
-                        <option value="MDY">MM/JJ/AAAA</option>
-                        <option value="YMD">AAAA-MM-JJ</option>
-                    </select>
-</div>
-<div class="form-group">
-    <label for="importAction">Action :</label>
-    <select id="importAction" name="importAction">
-                        <option value="append">Ajouter aux données existantes</option>
-                        <option value="replace">Remplacer les données existantes</option>
-                    </select>
-</div>
-<div class="form-actions">
-    <button type="submit" class="btn primary-btn">Importer</button>
-    <button type="button" class="btn secondary-btn cancel-btn">Annuler</button>
-</div>
-</form>
-</div>
-</div>
-
-<div id="exportModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Exporter des données</h2>
-        <form id="exportForm">
-            <div class="form-group">
-                <label for="exportFormat">Format d'exportation :</label>
-                <select id="exportFormat" name="exportFormat">
-                        <option value="csv">CSV</option>
-                        <option value="json">JSON</option>
-                        <option value="pdf">PDF</option>
-                        <option value="excel">Excel</option>
-                    </select>
-            </div>
-            <div class="form
+</html>
