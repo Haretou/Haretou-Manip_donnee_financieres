@@ -10,6 +10,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Chart.js pour les graphiques -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <!-- Bibliothèque html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Script d'exportation PDF personnalisé -->
+    <script src="js/export_pdf.js"></script>
+
+    <!-- Styles supplémentaires pour l'exportation PDF -->
+    <style>
+        .checkbox-group {
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        #pdfExportOptions {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid #e6e6e6;
+        }
+    </style>
 </head>
 
 <body>
@@ -324,14 +347,14 @@
                     <select id="exportFormat" name="exportFormat">
                         <option value="csv">CSV</option>
                         <option value="json">JSON</option>
-                        <option value="pdf">PDF</option>
+                        <option value="pdf" selected>PDF</option>
                         <option value="excel">Excel</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="exportContent">Contenu à exporter :</label>
                     <select id="exportContent" name="exportContent">
-                        <option value="all">Toutes les données</option>
+                        <option value="all" selected>Toutes les données</option>
                         <option value="filtered">Données filtrées actuelles</option>
                         <option value="sales">Ventes par magasin</option>
                         <option value="products">Ventes par produit</option>
@@ -340,12 +363,12 @@
                 <div class="form-group">
                     <label for="dateRange">Période :</label>
                     <select id="dateRange" name="dateRange">
-                        <option value="all">Toutes les données</option>
+                        <option value="all" selected>Toutes les données</option>
                         <option value="thisMonth">Mois en cours</option>
                         <option value="lastMonth">Mois précédent</option>
                         <option value="thisYear">Année en cours</option>
                         <option value="custom">Personnalisé</option>
-                    </select>
+                        </select>
                 </div>
                 <div id="customDateRange" style="display: none;">
                     <div class="form-group">
@@ -355,6 +378,31 @@
                     <div class="form-group">
                         <label for="exportEndDate">Date de fin :</label>
                         <input type="date" id="exportEndDate" name="exportEndDate">
+                    </div>
+                </div>
+                <!-- Nouvelles options spécifiques pour l'export PDF -->
+                <div id="pdfExportOptions">
+                    <div class="form-group">
+                        <label for="exportOrientation">Orientation de la page :</label>
+                        <select id="exportOrientation" name="exportOrientation">
+                            <option value="portrait" selected>Portrait</option>
+                            <option value="landscape">Paysage</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Éléments à inclure :</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="includeHeader" name="includeHeader" checked>
+                            <label for="includeHeader">En-tête et métriques</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="includeCharts" name="includeCharts" checked>
+                            <label for="includeCharts">Graphiques</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="includeTables" name="includeTables" checked>
+                            <label for="includeTables">Tableaux de données</label>
+                        </div>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -462,6 +510,18 @@
                     customDateRange.style.display = 'block';
                 } else {
                     customDateRange.style.display = 'none';
+                }
+            });
+
+            // Gestion des options d'exportation PDF
+            const exportFormat = document.getElementById('exportFormat');
+            const pdfExportOptions = document.getElementById('pdfExportOptions');
+
+            exportFormat.addEventListener('change', function() {
+                if (this.value === 'pdf') {
+                    pdfExportOptions.style.display = 'block';
+                } else {
+                    pdfExportOptions.style.display = 'none';
                 }
             });
 
