@@ -15,8 +15,6 @@ Ce projet est un système complet de gestion et d'analyse des données de ventes
 - Serveur MySQL (XAMPP, MAMP ou équivalent pour phpMyAdmin)
 - Navigateur web moderne
 
-## Installation et configuration
-
 ### 1. Base de données
 1. Lancez phpMyAdmin (via MAMP)
 2. Créez une nouvelle base de données appelée `ventes_db`
