@@ -142,8 +142,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- Insertion de quelques données de test (à commenter pour la production)
-/*
 INSERT INTO ventes (date, magasin, produit, quantite, prix_unitaire) VALUES
 ('2023-01-15', 'Magasin Paris', 'Ordinateur portable', 5, 899.99),
 ('2023-01-15', 'Magasin Lyon', 'Smartphone', 10, 599.99),
@@ -152,4 +150,3 @@ INSERT INTO ventes (date, magasin, produit, quantite, prix_unitaire) VALUES
 ('2023-01-17', 'Magasin Lyon', 'Casque audio', 15, 79.99),
 ('2023-01-17', 'Magasin Paris', 'Smartphone', 7, 649.99),
 ('2023-01-18', 'Magasin Marseille', 'Ordinateur portable', 4, 1099.99)
-*/

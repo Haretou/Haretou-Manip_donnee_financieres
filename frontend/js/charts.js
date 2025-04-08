@@ -3,7 +3,6 @@
  * Dépend de Chart.js
  */
 
-// Configuration des couleurs
 const COLORS = {
     primary: '#3498db',
     secondary: '#2ecc71',
@@ -18,7 +17,6 @@ const COLORS = {
     border: 'rgba(52, 152, 219, 1)'
 };
 
-// Palette de couleurs pour les multiples séries
 const COLOR_PALETTE = [
     'rgba(52, 152, 219, 0.7)', // Bleu
     'rgba(46, 204, 113, 0.7)', // Vert
@@ -32,10 +30,8 @@ const COLOR_PALETTE = [
     'rgba(241, 196, 15, 0.7)' // Jaune vif
 ];
 
-// Palette de couleurs avec bordures
 const BORDER_COLOR_PALETTE = COLOR_PALETTE.map(color => color.replace('0.7', '1'));
 
-// Formatage des nombres en euros
 function formatEuro(value) {
     return new Intl.NumberFormat('fr-FR', {
         style: 'currency',
@@ -43,12 +39,10 @@ function formatEuro(value) {
     }).format(value);
 }
 
-// Formatage des nombres
 function formatNumber(value) {
     return new Intl.NumberFormat('fr-FR').format(value);
 }
 
-// Fonction principale pour initialiser tous les graphiques
 function initializeCharts(data) {
     if (!data) {
         console.error("Pas de données disponibles pour les graphiques");
@@ -61,18 +55,15 @@ function initializeCharts(data) {
     initProductsPerformanceChart(data);
     initMonthlyComparisonChart(data);
 
-    // Configuration des écouteurs d'événements
     setupChartEvents(data);
 }
 
-// Évolution des ventes
 function initSalesTrendChart(data) {
     if (!data.monthly_sales || data.monthly_sales.length === 0) {
         console.warn("Pas de données mensuelles disponibles");
         return;
     }
 
-    // Préparation des données
     const sortedSales = [...data.monthly_sales].sort((a, b) => a.periode.localeCompare(b.periode));
     const labels = sortedSales.map(item => {
         const [year, month] = item.periode.split('-');
@@ -80,7 +71,6 @@ function initSalesTrendChart(data) {
     });
     const values = sortedSales.map(item => item.total_ventes);
 
-    // Création du graphique
     const ctx = document.getElementById('salesTrendChart').getContext('2d');
     if (!ctx) {
         console.error("Canvas 'salesTrendChart' non trouvé");
@@ -135,20 +125,17 @@ function initSalesTrendChart(data) {
     });
 }
 
-// Ventes par magasin
 function initStoresComparisonChart(data) {
     if (!data.sales_by_store || data.sales_by_store.length === 0) {
         console.warn("Pas de données de ventes par magasin disponibles");
         return;
     }
 
-    // Préparation des données
     const sortedStores = [...data.sales_by_store].sort((a, b) => b.total_ventes - a.total_ventes);
     const topStores = sortedStores.slice(0, Math.min(10, sortedStores.length));
     const labels = topStores.map(item => item.magasin);
     const values = topStores.map(item => item.total_ventes);
 
-    // Création du graphique
     const ctx = document.getElementById('storesComparisonChart').getContext('2d');
     if (!ctx) {
         console.error("Canvas 'storesComparisonChart' non trouvé");
@@ -196,20 +183,17 @@ function initStoresComparisonChart(data) {
     });
 }
 
-// Performance des produits
 function initProductsPerformanceChart(data) {
     if (!data.sales_by_product || data.sales_by_product.length === 0) {
         console.warn("Pas de données de ventes par produit disponibles");
         return;
     }
 
-    // Préparation des données
     const sortedProducts = [...data.sales_by_product].sort((a, b) => b.total_ventes - a.total_ventes);
     const topProducts = sortedProducts.slice(0, Math.min(5, sortedProducts.length));
     const labels = topProducts.map(item => item.produit);
     const values = topProducts.map(item => item.total_ventes);
 
-    // Création du graphique
     const ctx = document.getElementById('productsPerformanceChart').getContext('2d');
     if (!ctx) {
         console.error("Canvas 'productsPerformanceChart' non trouvé");
@@ -254,14 +238,12 @@ function initProductsPerformanceChart(data) {
     });
 }
 
-// Comparaison mensuelle
 function initMonthlyComparisonChart(data) {
     if (!data.monthly_sales || data.monthly_sales.length === 0) {
         console.warn("Pas de données mensuelles disponibles");
         return;
     }
 
-    // Préparation des données
     const monthLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
     let monthlyValues = Array(12).fill(0);
 
@@ -272,7 +254,6 @@ function initMonthlyComparisonChart(data) {
         }
     });
 
-    // Création du graphique
     const ctx = document.getElementById('monthlyComparisonChart').getContext('2d');
     if (!ctx) {
         console.error("Canvas 'monthlyComparisonChart' non trouvé");
@@ -320,9 +301,7 @@ function initMonthlyComparisonChart(data) {
     });
 }
 
-// Configuration des écouteurs d'événements pour les contrôles
 function setupChartEvents(data) {
-    // Changement de période pour l'évolution des ventes
     const salesTrendPeriod = document.getElementById('salesTrendPeriod');
     if (salesTrendPeriod) {
         salesTrendPeriod.addEventListener('change', function() {
@@ -330,7 +309,6 @@ function setupChartEvents(data) {
         });
     }
 
-    // Changement de type de graphique pour les magasins
     const storesChartType = document.getElementById('storesChartType');
     if (storesChartType) {
         storesChartType.addEventListener('change', function() {
@@ -338,7 +316,6 @@ function setupChartEvents(data) {
         });
     }
 
-    // Changement de métrique pour les produits
     const productMetric = document.getElementById('productMetric');
     if (productMetric) {
         productMetric.addEventListener('change', function() {
@@ -346,7 +323,6 @@ function setupChartEvents(data) {
         });
     }
 
-    // Changement d'année pour la comparaison mensuelle
     const comparisonYear = document.getElementById('comparisonYear');
     if (comparisonYear) {
         comparisonYear.addEventListener('change', function() {
@@ -354,7 +330,6 @@ function setupChartEvents(data) {
         });
     }
 
-    // Limite du tableau des produits
     const productLimit = document.getElementById('productLimit');
     if (productLimit) {
         productLimit.addEventListener('change', function() {
@@ -362,7 +337,6 @@ function setupChartEvents(data) {
         });
     }
 
-    // Tri du tableau des magasins
     const storeSort = document.getElementById('storeSort');
     if (storeSort) {
         storeSort.addEventListener('change', function() {
@@ -370,7 +344,6 @@ function setupChartEvents(data) {
         });
     }
 
-    // Recherche dans les tableaux
     const storeSearch = document.getElementById('storeSearch');
     if (storeSearch) {
         storeSearch.addEventListener('input', function() {
@@ -385,7 +358,6 @@ function setupChartEvents(data) {
         });
     }
 
-    // Bouton de rafraîchissement
     const refreshBtn = document.getElementById('refreshData');
     if (refreshBtn) {
         refreshBtn.addEventListener('click', function() {
@@ -394,11 +366,9 @@ function setupChartEvents(data) {
     }
 }
 
-// Mise à jour de l'évolution des ventes selon la période
 function updateSalesTrendChart(periodType, data) {
     if (!window.salesTrendChart || !data.monthly_sales) return;
 
-    // Préparation des données selon la période
     let periodData = {};
 
     data.monthly_sales.forEach(item => {
@@ -406,23 +376,19 @@ function updateSalesTrendChart(periodType, data) {
         let key;
 
         if (periodType === 'weekly') {
-            // Simulation des données hebdomadaires (diviser les mois en 4 semaines)
             for (let week = 1; week <= 4; week++) {
                 key = `${year}-${month}-W${week}`;
                 periodData[key] = (periodData[key] || 0) + (item.total_ventes / 4);
             }
         } else if (periodType === 'yearly') {
-            // Données annuelles
             key = year;
             periodData[key] = (periodData[key] || 0) + item.total_ventes;
         } else {
-            // Données mensuelles (par défaut)
             key = item.periode;
             periodData[key] = (periodData[key] || 0) + item.total_ventes;
         }
     });
 
-    // Conversion en arrays pour le graphique
     const sortedPeriods = Object.keys(periodData).sort();
     const labels = sortedPeriods.map(period => {
         if (periodType === 'weekly') {
@@ -438,31 +404,26 @@ function updateSalesTrendChart(periodType, data) {
 
     const values = sortedPeriods.map(period => periodData[period]);
 
-    // Mise à jour du graphique
     window.salesTrendChart.data.labels = labels;
     window.salesTrendChart.data.datasets[0].data = values;
     window.salesTrendChart.update();
 }
 
-// Mise à jour du type de graphique pour les magasins
 function updateStoresChartType(chartType, data) {
     if (!data.sales_by_store) return;
 
     const canvas = document.getElementById('storesComparisonChart');
     if (!canvas) return;
 
-    // Détruire le graphique existant
     if (window.storesComparisonChart) {
         window.storesComparisonChart.destroy();
     }
 
-    // Préparation des données
     const sortedStores = [...data.sales_by_store].sort((a, b) => b.total_ventes - a.total_ventes);
     const topStores = sortedStores.slice(0, Math.min(10, sortedStores.length));
     const labels = topStores.map(item => item.magasin);
     const values = topStores.map(item => item.total_ventes);
 
-    // Options communes
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -485,7 +446,6 @@ function updateStoresChartType(chartType, data) {
         }
     };
 
-    // Options spécifiques au type de graphique
     if (chartType !== 'pie') {
         options.scales = {
             y: {
@@ -499,7 +459,6 @@ function updateStoresChartType(chartType, data) {
         };
     }
 
-    // Création du nouveau graphique
     const ctx = canvas.getContext('2d');
     window.storesComparisonChart = new Chart(ctx, {
         type: chartType,
@@ -517,11 +476,9 @@ function updateStoresChartType(chartType, data) {
     });
 }
 
-// Mise à jour de la métrique pour les produits
 function updateProductMetric(metricType, data) {
     if (!window.productsPerformanceChart || !data.sales_by_product) return;
 
-    // Tri et sélection selon la métrique
     const sortedProducts = [...data.sales_by_product].sort((a, b) => {
         if (metricType === 'quantity') {
             return b.quantite_totale - a.quantite_totale;
@@ -536,7 +493,6 @@ function updateProductMetric(metricType, data) {
         metricType === 'quantity' ? item.quantite_totale : item.total_ventes
     );
 
-    // Mise à jour des données et des tooltips
     window.productsPerformanceChart.data.labels = labels;
     window.productsPerformanceChart.data.datasets[0].data = values;
     window.productsPerformanceChart.options.plugins.tooltip.callbacks.label = function(context) {
@@ -556,11 +512,9 @@ function updateProductMetric(metricType, data) {
     window.productsPerformanceChart.update();
 }
 
-// Mise à jour de l'année pour la comparaison mensuelle
 function updateMonthlyComparisonYear(year, data) {
     if (!window.monthlyComparisonChart || !data.monthly_sales) return;
 
-    // Préparation des données pour l'année sélectionnée
     let monthlyValues = Array(12).fill(0);
 
     data.monthly_sales.forEach(item => {
@@ -572,12 +526,10 @@ function updateMonthlyComparisonYear(year, data) {
         }
     });
 
-    // Mise à jour du graphique
     window.monthlyComparisonChart.data.datasets[0].data = monthlyValues;
     window.monthlyComparisonChart.update();
 }
 
-// Mise à jour du tableau des produits
 function updateProductsTable(limit, data) {
     if (!data.sales_by_product) return;
 
@@ -587,19 +539,15 @@ function updateProductsTable(limit, data) {
     const tbody = productsTable.querySelector('tbody');
     if (!tbody) return;
 
-    // Vider le tableau
     tbody.innerHTML = '';
 
-    // Tri des produits
     const sortedProducts = [...data.sales_by_product].sort((a, b) => b.total_ventes - a.total_ventes);
 
-    // Limiter selon la sélection
     const limitNumber = limit === 'all' ? sortedProducts.length : parseInt(limit);
     const productsToShow = sortedProducts.slice(0, limitNumber);
 
     const totalSales = data.total_sales || 1;
 
-    // Remplir le tableau
     productsToShow.forEach(product => {
         const percentage = (product.total_ventes / totalSales) * 100;
         const avgPrice = product.total_ventes / (product.quantite_totale || 1);
@@ -616,7 +564,6 @@ function updateProductsTable(limit, data) {
     });
 }
 
-// Tri du tableau des magasins
 function sortStoresTable(sortOption, data) {
     if (!data.sales_by_store) return;
 
@@ -626,10 +573,8 @@ function sortStoresTable(sortOption, data) {
     const tbody = storesTable.querySelector('tbody');
     if (!tbody) return;
 
-    // Vider le tableau
     tbody.innerHTML = '';
 
-    // Tri selon l'option sélectionnée
     const sortedStores = [...data.sales_by_store].sort((a, b) => {
         if (sortOption === 'sales-desc') {
             return b.total_ventes - a.total_ventes;
@@ -644,7 +589,6 @@ function sortStoresTable(sortOption, data) {
 
     const totalSales = data.total_sales || 1;
 
-    // Remplir le tableau
     sortedStores.forEach(store => {
         const percentage = (store.total_ventes / totalSales) * 100;
 
@@ -660,7 +604,6 @@ function sortStoresTable(sortOption, data) {
     });
 }
 
-// Recherche dans le tableau des magasins
 function searchStoresTable(searchText) {
     const storesTable = document.getElementById('storesTable');
     if (!storesTable) return;
@@ -674,7 +617,6 @@ function searchStoresTable(searchText) {
     });
 }
 
-// Recherche dans le tableau des produits
 function searchProductsTable(searchText) {
     const productsTable = document.getElementById('productsTable');
     if (!productsTable) return;

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Module pour l'analyse des données de ventes
+Analyse les données de ventes et génère les statistiques pour le tableau de bord
 """
 
 import pandas as pd
@@ -28,16 +28,13 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(obj)
 
 class SalesAnalyzer:
-    """Classe pour analyser les données de ventes"""
     
     def __init__(self, db_manager=None):
-        """Initialise l'analyseur avec un gestionnaire de base de données"""
         self.db = db_manager or DatabaseManager()
         if not self.db.connection or not self.db.connection.is_connected():
             self.db.connect()
     
     def load_data_from_csv(self, csv_file):
-        """Charge les données depuis un fichier CSV"""
         try:
             # Lecture du fichier CSV
             df = pd.read_csv(csv_file, encoding='utf-8')
@@ -70,7 +67,6 @@ class SalesAnalyzer:
             return None
     
     def load_data_from_db(self):
-        """Charge les données depuis la base de données"""
         query = """
         SELECT date, magasin, produit, quantite, prix_unitaire,
                quantite * prix_unitaire AS montant
@@ -82,7 +78,6 @@ class SalesAnalyzer:
             print("Pas de données disponibles dans la base de données.")
             return None
             
-        # Convertir les valeurs Decimal en float
         converted_data = []
         for row in data:
             converted_row = {}
@@ -95,7 +90,6 @@ class SalesAnalyzer:
             
         df = pd.DataFrame(converted_data)
         
-        # Standardisation des noms de colonnes pour correspondre à ceux utilisés dans les fonctions d'analyse
         column_mapping = {
             'date': 'Date',
             'magasin': 'Magasin',
@@ -107,24 +101,20 @@ class SalesAnalyzer:
         
         df.rename(columns=column_mapping, inplace=True)
         
-        # Conversion des dates si nécessaire
         if 'Date' in df.columns and not pd.api.types.is_datetime64_any_dtype(df['Date']):
             df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
             
         return df
     
     def calculate_total_sales(self, df=None):
-        """Calcule le montant total des ventes"""
         if df is None:
             total = self.db.get_total_sales()
             return float(total) if isinstance(total, Decimal) else total
         return float(df['montant'].sum())
     
     def sales_by_store(self, df=None):
-        """Analyse les ventes par magasin"""
         if df is None:
             stores = self.db.get_sales_by_store()
-            # Convertir les valeurs Decimal
             for store in stores:
                 for key, value in store.items():
                     if isinstance(value, Decimal):
@@ -133,7 +123,6 @@ class SalesAnalyzer:
         
         store_sales = df.groupby('Magasin')['montant'].sum().reset_index()
         
-        # Ajouter la quantité totale par magasin si disponible
         if 'quantite' in df.columns:
             store_quantity = df.groupby('Magasin')['quantite'].sum().reset_index()
             store_quantity.rename(columns={'quantite': 'quantite_totale'}, inplace=True)
@@ -143,10 +132,8 @@ class SalesAnalyzer:
         return store_sales.to_dict('records')
     
     def sales_by_product(self, df=None):
-        """Analyse les ventes par produit"""
         if df is None:
             products = self.db.get_sales_by_product()
-            # Convertir les valeurs Decimal
             for product in products:
                 for key, value in product.items():
                     if isinstance(value, Decimal):
@@ -162,10 +149,8 @@ class SalesAnalyzer:
         return product_sales.to_dict('records')
     
     def sales_trend(self, df=None, period='M'):
-        """Analyse la tendance des ventes (D: quotidien, M: mensuel, Y: annuel)"""
         if df is None:
             trends = self.db.get_sales_by_date('monthly' if period == 'M' else 'daily' if period == 'D' else 'yearly')
-            # Convertir les valeurs Decimal
             for trend in trends:
                 for key, value in trend.items():
                     if isinstance(value, Decimal):
@@ -184,7 +169,6 @@ class SalesAnalyzer:
         return trend.to_dict('records')
     
     def best_selling_products(self, df=None, limit=5):
-        """Identifie les produits les plus vendus"""
         if df is None:
             products = self.db.get_best_selling_products(limit)
             # Convertir les valeurs Decimal
@@ -200,7 +184,6 @@ class SalesAnalyzer:
         return top_products.to_dict('records')
     
     def convert_decimal_values(self, data):
-        """Convertit récursivement toutes les valeurs Decimal en float dans une structure de données"""
         if isinstance(data, dict):
             return {k: self.convert_decimal_values(v) for k, v in data.items()}
         elif isinstance(data, list):
@@ -211,14 +194,12 @@ class SalesAnalyzer:
             return data
     
     def generate_full_report(self, output_format='json'):
-        """Génère un rapport complet d'analyse"""
         # Chargement des données
         df = self.load_data_from_db()
         if df is None:
             print("Impossible de charger les données depuis la base de données.")
             return None
         
-        # Préparation du rapport
         report = {
             'date_generation': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'total_ventes': self.calculate_total_sales(df),
@@ -228,10 +209,8 @@ class SalesAnalyzer:
             'produits_populaires': self.best_selling_products(df)
         }
         
-        # Convertir toutes les valeurs Decimal en float
         report = self.convert_decimal_values(report)
         
-        # Exportation du rapport
         script_dir = os.path.dirname(os.path.abspath(__file__))
         project_dir = os.path.dirname(script_dir)
         
@@ -242,7 +221,6 @@ class SalesAnalyzer:
             print(f"Rapport JSON généré: {report_path}")
         
         elif output_format == 'csv':
-            # Export des différentes sections du rapport en CSV
             for section, data in report.items():
                 if isinstance(data, list) and data:
                     keys = data[0].keys()
@@ -256,17 +234,14 @@ class SalesAnalyzer:
         return report
     
     def export_data_for_dashboard(self):
-        """Exporte les données pour le tableau de bord"""
         if not self.db.connection or not self.db.connection.is_connected():
             self.db.connect()
         
         try:
             dashboard_data = self.db.get_sales_data_for_dashboard()
             
-            # Convertir toutes les valeurs Decimal en float
             dashboard_data = self.convert_decimal_values(dashboard_data)
             
-            # Création du dossier js s'il n'existe pas
             script_dir = os.path.dirname(os.path.abspath(__file__))
             project_dir = os.path.dirname(script_dir)
             js_dir = os.path.join(project_dir, 'frontend', 'js')
@@ -286,11 +261,9 @@ class SalesAnalyzer:
             print(f"Erreur lors de l'exportation des données pour le tableau de bord: {e}")
             return None
 
-# Exemple d'utilisation
 if __name__ == "__main__":
     analyzer = SalesAnalyzer()
     report = analyzer.generate_full_report(output_format='json')
     analyzer.export_data_for_dashboard()
     
-    # Fermeture de la connexion
     analyzer.db.disconnect()

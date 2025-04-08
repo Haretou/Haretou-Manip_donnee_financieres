@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Module pour interagir avec la base de données MySQL/phpMyAdmin
+Module qui gère toutes les interactions avec la base de données (requêtes, connexions)
 """
 
 import mysql.connector
@@ -10,16 +10,13 @@ from mysql.connector import Error
 from config import DB_CONFIG
 
 class DatabaseManager:
-    """Classe pour gérer les interactions avec la base de données"""
     
     def __init__(self, config=None):
-        """Initialise la connexion à la base de données"""
         self.config = config or DB_CONFIG
         self.connection = None
         self.cursor = None
     
     def connect(self):
-        """Établit une connexion à la base de données"""
         try:
             self.connection = mysql.connector.connect(**self.config)
             if self.connection.is_connected():
@@ -30,7 +27,6 @@ class DatabaseManager:
             return False
     
     def disconnect(self):
-        """Ferme la connexion à la base de données"""
         if self.connection and self.connection.is_connected():
             if self.cursor:
                 self.cursor.close()
@@ -52,7 +48,6 @@ class DatabaseManager:
             return False
     
     def fetch_all(self, query, params=None):
-        """Exécute une requête et récupère tous les résultats"""
         if not self.execute_query(query, params):
             return []
         
@@ -63,7 +58,6 @@ class DatabaseManager:
             return []
     
     def fetch_one(self, query, params=None):
-        """Exécute une requête et récupère un seul résultat"""
         if not self.execute_query(query, params):
             return None
         
@@ -76,7 +70,6 @@ class DatabaseManager:
     # Méthodes spécifiques pour l'application
     
     def get_total_sales(self):
-        """Récupère le montant total des ventes"""
         query = """
         SELECT SUM(quantite * prix_unitaire) AS total_ventes
         FROM ventes
@@ -85,7 +78,6 @@ class DatabaseManager:
         return result['total_ventes'] if result else 0
     
     def get_sales_by_store(self):
-        """Récupère les ventes par magasin"""
         query = """
         SELECT magasin, SUM(quantite * prix_unitaire) AS total_ventes
         FROM ventes
@@ -95,7 +87,6 @@ class DatabaseManager:
         return self.fetch_all(query)
     
     def get_sales_by_product(self):
-        """Récupère les ventes par produit"""
         query = """
         SELECT produit, SUM(quantite) AS quantite_totale, 
                SUM(quantite * prix_unitaire) AS total_ventes
@@ -106,7 +97,6 @@ class DatabaseManager:
         return self.fetch_all(query)
     
     def get_sales_by_date(self, period='monthly'):
-        """Récupère les ventes par période"""
         if period == 'daily':
             date_format = '%Y-%m-%d'
             group_by = 'date'
@@ -127,7 +117,6 @@ class DatabaseManager:
         return self.fetch_all(query)
     
     def get_best_selling_products(self, limit=5):
-        """Récupère les produits les plus vendus"""
         query = """
         SELECT produit, SUM(quantite) AS quantite_totale
         FROM ventes
@@ -138,7 +127,6 @@ class DatabaseManager:
         return self.fetch_all(query, (limit,))
     
     def get_sales_data_for_dashboard(self):
-        """Récupère toutes les données nécessaires pour le tableau de bord"""
         return {
             'total_sales': self.get_total_sales(),
             'sales_by_store': self.get_sales_by_store(),
