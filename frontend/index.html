@@ -204,7 +204,6 @@
     <script src="js/dashboard_data.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Gestion des modales
             const importBtn = document.getElementById('importBtn');
             const exportBtn = document.getElementById('exportBtn');
             const footerImportBtn = document.getElementById('footerImportBtn');
@@ -214,13 +213,11 @@
             const closeBtns = document.querySelectorAll('.close');
             const cancelBtns = document.querySelectorAll('.cancel-btn');
 
-            // Ouverture des modales
             importBtn.addEventListener('click', () => importModal.style.display = 'block');
             exportBtn.addEventListener('click', () => exportModal.style.display = 'block');
             footerImportBtn.addEventListener('click', () => importModal.style.display = 'block');
             footerExportBtn.addEventListener('click', () => exportModal.style.display = 'block');
 
-            // Fermeture des modales
             closeBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     importModal.style.display = 'none';
@@ -244,7 +241,7 @@
                 }
             });
 
-            // Gestion de la sélection de date personnalisée
+
             const dateRange = document.getElementById('dateRange');
             const customDateRange = document.getElementById('customDateRange');
 
@@ -256,7 +253,7 @@
                 }
             });
 
-            // Charger les statistiques rapides si les données sont disponibles
+            // Charger les statistiques 
             if (typeof dashboardData !== 'undefined') {
                 // Total des ventes
                 const totalSalesElement = document.querySelector('#totalSales .stat-value');
@@ -265,7 +262,7 @@
                     currency: 'EUR'
                 }).format(dashboardData.total_sales);
 
-                // Meilleur magasin
+                // MTop magasin
                 if (dashboardData.sales_by_store && dashboardData.sales_by_store.length > 0) {
                     const bestStore = dashboardData.sales_by_store[0];
                     document.querySelector('#bestStore .stat-value').textContent = bestStore.magasin;
@@ -275,14 +272,14 @@
                     }).format(bestStore.total_ventes);
                 }
 
-                // Produit le plus vendu
+                // Top vente
                 if (dashboardData.best_selling_products && dashboardData.best_selling_products.length > 0) {
                     const bestProduct = dashboardData.best_selling_products[0];
                     document.querySelector('#bestProduct .stat-value').textContent = bestProduct.produit;
                     document.querySelector('#bestProduct .stat-detail').textContent = `${bestProduct.quantite_totale} unités`;
                 }
 
-                // Date de mise à jour
+                // MàJ
                 const now = new Date();
                 document.querySelector('#updateDate').textContent = now.toLocaleDateString('fr-FR');
                 document.querySelector('#updateTime').textContent = now.toLocaleTimeString('fr-FR');

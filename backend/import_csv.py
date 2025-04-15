@@ -41,7 +41,7 @@ def format_date(date_str):
         for fmt in formats:
             try:
                 date_obj = datetime.datetime.strptime(date_str.strip(), fmt)
-                return date_obj.strftime('%Y-%m-%d')  # Retourne au format SQL 
+                return date_obj.strftime('%Y-%m-%d')  # renvoie en SQL 
             except (ValueError, TypeError):
                 continue
                 

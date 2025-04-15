@@ -10,29 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Chart.js pour les graphiques -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-    <!-- Bibliothèque html2pdf.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Script d'exportation PDF personnalisé -->
-    <script src="js/export_pdf.js"></script>
+
+    <!-- CORRECTION: Assurons-nous que html2pdf.js est correctement chargé -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Styles supplémentaires pour l'exportation PDF -->
-    <style>
-        .checkbox-group {
-            margin-bottom: 10px;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 8px;
-        }
-        
-        #pdfExportOptions {
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            border: 1px solid #e6e6e6;
-        }
-    </style>
+    <link rel="stylesheet" href="css/export_pdf.css">
 </head>
 
 <body>
@@ -345,10 +328,7 @@
                 <div class="form-group">
                     <label for="exportFormat">Format d'exportation :</label>
                     <select id="exportFormat" name="exportFormat">
-                        <option value="csv">CSV</option>
-                        <option value="json">JSON</option>
                         <option value="pdf" selected>PDF</option>
-                        <option value="excel">Excel</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -441,6 +421,8 @@
 
     <script src="js/dashboard_data.js"></script>
     <script src="js/charts.js"></script>
+    <!-- CORRECTION: Chargement de notre script d'export PDF après les données et graphiques -->
+    <script src="js/export_pdf.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mise à jour de la date actuelle
@@ -513,18 +495,6 @@
                 }
             });
 
-            // Gestion des options d'exportation PDF
-            const exportFormat = document.getElementById('exportFormat');
-            const pdfExportOptions = document.getElementById('pdfExportOptions');
-
-            exportFormat.addEventListener('change', function() {
-                if (this.value === 'pdf') {
-                    pdfExportOptions.style.display = 'block';
-                } else {
-                    pdfExportOptions.style.display = 'none';
-                }
-            });
-
             // Initialiser les tableaux et graphiques
             if (typeof dashboardData !== 'undefined' && typeof initializeCharts === 'function') {
                 initializeCharts(dashboardData);
@@ -566,7 +536,6 @@
                 maximumFractionDigits: 2
             }).format(avgTransaction);
 
-            // Pour l'instant on ne calcule pas les évolutions car pas de données historiques
             document.getElementById('totalSalesChange').textContent = 'N/A';
             document.getElementById('totalProductsChange').textContent = 'N/A';
             document.getElementById('activeStoresChange').textContent = 'N/A';
@@ -687,14 +656,35 @@
                     const percentage = (product.total_ventes / totalSales) * 100;
                     const avgPrice = product.total_ventes / product.quantite_totale;
 
+                    // Utilisation de createElement pour éviter les problèmes d'indentation
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${product.produit}</td>
-                        <td>${new Intl.NumberFormat('fr-FR').format(product.quantite_totale)}</td>
-                        <td>${new Intl.NumberFormat('fr-FR', {style: 'currency', currency: 'EUR'}).format(product.total_ventes)}</td>
-                        <td>${new Intl.NumberFormat('fr-FR', {style: 'currency', currency: 'EUR'}).format(avgPrice)}</td>
-                        <td>${percentage.toFixed(2)}%</td>
-                    `;
+
+                    const productCell = document.createElement('td');
+                    productCell.textContent = product.produit;
+                    row.appendChild(productCell);
+
+                    const quantityCell = document.createElement('td');
+                    quantityCell.textContent = new Intl.NumberFormat('fr-FR').format(product.quantite_totale);
+                    row.appendChild(quantityCell);
+
+                    const salesCell = document.createElement('td');
+                    salesCell.textContent = new Intl.NumberFormat('fr-FR', {
+                        style: 'currency',
+                        currency: 'EUR'
+                    }).format(product.total_ventes);
+                    row.appendChild(salesCell);
+
+                    const priceCell = document.createElement('td');
+                    priceCell.textContent = new Intl.NumberFormat('fr-FR', {
+                        style: 'currency',
+                        currency: 'EUR'
+                    }).format(avgPrice);
+                    row.appendChild(priceCell);
+
+                    const percentCell = document.createElement('td');
+                    percentCell.textContent = percentage.toFixed(2) + '%';
+                    row.appendChild(percentCell);
+
                     productsTable.appendChild(row);
                 });
             }
