@@ -17,7 +17,7 @@ Ce projet est un système complet de gestion et d'analyse des données de ventes
 
 ### 1. Base de données
 1. Lancez phpMyAdmin (via MAMP)
-2. Créez une nouvelle base de données appelée `ventes_db`
+2. Base de données appelée `ventes_db`
 3. Importez le fichier `base_de_donnees/ventes_db.sql`
 
 
