@@ -25,10 +25,10 @@ def format_date(date_str):
     """Convertit une date au format français en format SQL"""
     try:
         formats = [
-            '%Y-%m-%d %H:%M:%S.%f',  # 2023-12-16 06:32:43.636363640
-            '%Y-%m-%d %H:%M:%S',     # 2023-12-16 06:32:43
-            '%Y-%m-%dT%H:%M:%S.%f',  # 2023-12-16T06:32:43.636363640 (format ISO)
-            '%Y-%m-%dT%H:%M:%S',     # 2023-12-16T06:32:43 (format ISO)
+            '%Y-%m-%d %H:%M:%S.%f',  
+            '%Y-%m-%d %H:%M:%S',     
+            '%Y-%m-%dT%H:%M:%S.%f',  
+            '%Y-%m-%dT%H:%M:%S',     
             '%d/%m/%Y %H:%M:%S',     # 16/12/2023 06:32:43 (format français avec heure)
             '%d/%m/%Y',              # 16/12/2023 (format français)
             '%Y-%m-%d',              # 2023-12-16 (format SQL)
@@ -41,7 +41,7 @@ def format_date(date_str):
         for fmt in formats:
             try:
                 date_obj = datetime.datetime.strptime(date_str.strip(), fmt)
-                return date_obj.strftime('%Y-%m-%d')  # Retourne au format SQL standard
+                return date_obj.strftime('%Y-%m-%d')  # Retourne au format SQL 
             except (ValueError, TypeError):
                 continue
                 
