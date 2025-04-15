@@ -44,4 +44,4 @@ Le système attend un fichier CSV avec les colonnes suivantes :
 - Exportation des rapports
 
 ## Note de développement
-Ce projet a été conçu pour fonctionner sur un Mac M2 avec Python, phpMyAdmin et les technologies web standards. Il est optimisé pour une utilisation locale et peut être adapté pour un déploiement en production avec des modifications appropriées.
+Ce projet a été conçu pour fonctionner sur un Mac M2 avec Python, phpMyAdmin et les technologies web standards. Il est optimisé pour une utilisation locale.
